@@ -1,0 +1,10 @@
+pandas
+numpy
+scikit-learn
+kafka-python
+pymongo
+pyspark
+matplotlib
+seaborn
+jupyter
+python-dotenv
