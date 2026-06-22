@@ -22,3 +22,19 @@ An end-to-end real-time fraud detection pipeline simulating a production-grade s
 - `notebooks/`: Jupyter Notebooks for EDA and prototyping
 - `config/`: Application environment configurations
 - `docker/`: Docker container configuration files
+# Real-Time Financial Fraud Detection Pipeline
+
+## Problem Statement
+
+Detect fraudulent financial transactions in real time using Machine Learning and Streaming Technologies.
+
+## Technology Stack
+
+- Python
+- Kafka
+- Spark Streaming
+- FastAPI
+- PostgreSQL
+- Docker
+- MLflow
+- AWS
