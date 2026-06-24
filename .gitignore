@@ -6,3 +6,14 @@ __pycache__/
 .DS_Store
 data/*.csv
 data/*.json
+# Dataset
+data/raw/
+*.csv
+
+# Processed data
+data/processed/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+data/raw/paysim.csv
+data/processed/
