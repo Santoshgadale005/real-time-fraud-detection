@@ -1,0 +1,6 @@
+Kafka architecture
+Producer workflow
+Topic creation
+Screenshots
+Challenges faced
+Learnings
