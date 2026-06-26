@@ -178,8 +178,22 @@ PaySim transaction records appear as JSON messages.
 
 ## Next Step
 
-Day 5 will add Kafka consumer development and end-to-end streaming validation:
+## 🚀 Day 5 Highlights
 
-```text
-Producer -> Kafka -> Consumer
-```
+Implemented a real-time fraud detection pipeline using Apache Kafka.
+
+### Features Completed
+
+- Kafka Producer publishes transaction data.
+- Kafka Consumer receives transaction data in real time.
+- Trained Random Forest model predicts fraud.
+- Label Encoder converts transaction types.
+- Real-time fraud prediction with confidence score.
+  
+  ## 📊 Sample Prediction
+
+Transaction Received
+
+Prediction: Legitimate
+
+Confidence: 0.9987
