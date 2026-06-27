@@ -183,3 +183,40 @@ Day 5 will add Kafka consumer development and end-to-end streaming validation:
 ```text
 Producer -> Kafka -> Consumer
 ```
+## Day 6 – Model Deployment with FastAPI
+
+### Features
+
+- Built a REST API using FastAPI
+- Loaded trained fraud detection model
+- Loaded label encoder
+- Created `/predict` endpoint
+- Tested API using Swagger UI
+- Successfully predicted fraudulent transactions
+
+### Run API
+
+```bash
+uvicorn app.main:app --reload
+```
+
+### Swagger
+
+```
+http://127.0.0.1:8000/docs
+```
+
+### Example Request
+
+```json
+{
+  "step": 1,
+  "type": "PAYMENT",
+  "amount": 9839.64,
+  "oldbalanceOrg": 170136,
+  "newbalanceOrig": 160296.36,
+  "oldbalanceDest": 0,
+  "newbalanceDest": 0,
+  "isFlaggedFraud": 0
+}
+```
