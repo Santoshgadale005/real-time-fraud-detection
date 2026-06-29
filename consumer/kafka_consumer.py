@@ -2,15 +2,22 @@ from kafka import KafkaConsumer
 import json
 import pandas as pd
 import joblib
+import os
 
 # Load model and encoder
 model = joblib.load("models/fraud_model.pkl")
 encoder = joblib.load("models/label_encoder.pkl")
 
+# Kafka server
+bootstrap_server = os.getenv("KAFKA_BOOTSTRAP_SERVER", "kafka:29092")
+
+# Create Kafka Consumer
 consumer = KafkaConsumer(
     "transactions",
-    bootstrap_servers="localhost:9092",
+    bootstrap_servers=bootstrap_server,
     auto_offset_reset="earliest",
+    enable_auto_commit=True,
+    group_id="fraud-consumer",
     value_deserializer=lambda x: json.loads(x.decode("utf-8"))
 )
 

@@ -53,6 +53,41 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     restart: unless-stopped
+  fastapi:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: fraud-api
+    ports:
+      - "8000:8000"
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:29092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  producer:
+    build:
+      context: .
+      dockerfile: producer/Dockerfile
+    container_name: transaction-producer
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:29092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  consumer:
+    build:
+      context: .
+      dockerfile: consumer/Dockerfile
+    container_name: transaction-consumer
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:29092
+    depends_on:
+      - kafka
+      - mongodb
+    restart: unless-stopped
 
 volumes:
   mongodb_data:

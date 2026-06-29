@@ -3,8 +3,12 @@ import json
 import pandas as pd
 import time
 
+import os
+
+bootstrap_server = os.getenv("KAFKA_BOOTSTRAP_SERVER", "kafka:29092")
+
 producer = KafkaProducer(
-    bootstrap_servers="localhost:9092",
+    bootstrap_servers=bootstrap_server,
     value_serializer=lambda v: json.dumps(v).encode("utf-8")
 )
 
