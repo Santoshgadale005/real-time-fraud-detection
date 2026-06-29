@@ -43,6 +43,7 @@ Grafana Dashboard
 real-time-fraud-detection/
 ├── config/             # Application configuration variables
 │   ├── kafka_config.py     # Shared Kafka settings (broker, topic)
+│   ├── producer_config.py  # Continuous producer settings (batching, compression, delay)
 │   └── consumer_config.py  # Consumer-specific settings (group, offset)
 ├── consumer/           # Kafka consumer utilities
 │   └── consumer.py         # Live transaction reader with JSON deserialization
@@ -54,7 +55,7 @@ real-time-fraud-detection/
 ├── monitoring/         # Prometheus and monitoring configuration
 ├── notebooks/          # EDA and prototyping notebooks
 ├── producer/           # Kafka transaction producer
-│   └── producer.py         # Streams PaySim CSV rows into Kafka
+│   └── producer.py         # Continuous simulator with UUID IDs, timestamps, retries
 ├── reports/            # Detailed project reports
 ├── spark/              # Spark Structured Streaming jobs
 ├── docker-compose.yml  # Local service orchestration
@@ -106,8 +107,9 @@ Container bootstrap server: kafka:29092
 Shared settings are loaded from:
 
 ```text
-config/kafka_config.py    ← broker address, topic name, producer delay
-config/consumer_config.py ← consumer group ID, offset reset policy
+config/kafka_config.py     ← broker address, topic name
+config/producer_config.py  ← batching, compression, continuous mode, retries
+config/consumer_config.py  ← consumer group ID, offset reset policy
 ```
 
 ## Create the Kafka Topic Manually
@@ -127,7 +129,7 @@ docker exec kafka kafka-topics \
   --bootstrap-server localhost:9092
 ```
 
-## Run the Transaction Producer
+## Run the Continuous Transaction Producer (Day 6)
 
 Install dependencies if needed:
 
@@ -135,27 +137,58 @@ Install dependencies if needed:
 pip install -r requirements.txt
 ```
 
-Create the topic automatically and send 10 test transactions:
+### Quick smoke test (10 records, exits after):
 
 ```bash
-python3 producer/producer.py --create-topic --max-records 10 --delay 0.1
+python3 producer/producer.py --no-continuous --create-topic --max-records 10 --delay 0.5
 ```
 
-Stream the full PaySim dataset:
+### Continuous mode (loops forever — simulates a live payment gateway):
 
 ```bash
-python3 producer/producer.py
+python3 producer/producer.py --continuous
 ```
 
-Useful producer options:
+### Continuous mode with faster throughput:
+
+```bash
+python3 producer/producer.py --continuous --delay 0.1
+```
+
+Press **Ctrl-C** at any time to flush remaining messages and shut down cleanly.
+
+### All producer options:
 
 ```text
---create-topic       Create the Kafka topic before publishing
---max-records 10     Send only 10 records for a quick test
---delay 0.1          Wait 0.1 seconds between messages
---dataset PATH       Use a different CSV file
---bootstrap-servers  Override the Kafka broker address
+--continuous          Loop through the dataset indefinitely (default: true)
+--no-continuous       Stream the dataset once then exit
+--create-topic        Create the Kafka topic before publishing
+--max-records N       Stop after N messages regardless of mode
+--delay SECONDS       Seconds between messages (default: 0.2)
+--dataset PATH        Use a different CSV file
+--bootstrap-servers   Override the Kafka broker address
+--compression         gzip | snappy | lz4 | zstd | none (default: gzip)
 ```
+
+### What each transaction now includes (Day 6 enrichment):
+
+```json
+{
+    "step": 1,
+    "type": "TRANSFER",
+    "amount": 9839.64,
+    "nameOrig": "C1231006815",
+    "nameDest": "M1979787155",
+    "isFraud": 0,
+    "transaction_id": "f3a2b1c4-...",
+    "timestamp": "2026-06-29T08:00:00.000000+00:00"
+}
+```
+
+| New field | Purpose |
+|-----------|---------|
+| `transaction_id` | UUID — unique identifier for every event |
+| `timestamp` | UTC ISO-8601 — records when the event entered the pipeline |
 
 ## Run the Transaction Consumer
 
@@ -260,6 +293,21 @@ The consumer runs under the group ID `fraud-detection-group` (configurable via `
 | `--offset-reset earliest` | Reads all messages already stored in Kafka (default) |
 | `--offset-reset latest`   | Reads only new messages arriving after the consumer starts |
 
+## Producer Configuration Reference (Day 6)
+
+All producer settings live in `config/producer_config.py` and can be overridden via environment variables:
+
+| Setting | Env Var | Default | Description |
+|---------|---------|---------|-------------|
+| Bootstrap servers | `KAFKA_BOOTSTRAP_SERVERS` | `localhost:9092` | Kafka broker |
+| Topic | `KAFKA_TRANSACTIONS_TOPIC` | `transactions` | Target topic |
+| Stream delay | `PRODUCER_DELAY_SECONDS` | `0.2` | Seconds between messages |
+| Continuous | `PRODUCER_CONTINUOUS` | `true` | Loop forever |
+| Batch size | `PRODUCER_BATCH_SIZE` | `16384` | Bytes per batch |
+| Linger | `PRODUCER_LINGER_MS` | `5` | ms to wait before sending batch |
+| Compression | `PRODUCER_COMPRESSION_TYPE` | `gzip` | Network compression |
+| Retries | `PRODUCER_RETRIES` | `5` | Auto-retry count |
+
 ## Current Progress
 
 - **Day 1**: Environment setup and Docker infrastructure
@@ -267,15 +315,17 @@ The consumer runs under the group ID `fraud-detection-group` (configurable via `
 - **Day 3**: Fraud pattern investigation and feature engineering
 - **Day 4**: Kafka fundamentals and transaction producer
 - **Day 5**: Kafka consumer and end-to-end streaming validation ✅
+- **Day 6**: Continuous producer, UUIDs, timestamps, batching, compression, retries ✅
 
 ## Next Step
 
-Day 6 will upgrade the producer into a **continuous transaction simulator**:
+Day 7 concludes Week 1 with **Streaming Pipeline Validation & Infrastructure Testing**:
 
 ```text
-Infinite streaming loop
-Producer throttling and batching
-Error handling and retries
-Logging and monitoring
-Realistic data generation for Spark Structured Streaming
+End-to-end pipeline validation
+Kafka throughput testing
+Consumer lag and offsets
+Pipeline health checks
+Project architecture review
+Week 1 integration testing
 ```
