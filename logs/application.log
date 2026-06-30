@@ -1,0 +1,15 @@
+2026-06-30 10:51:52,985 | INFO | Application Started Successfully
+2026-06-30 10:51:52,985 | WARNING | This is a warning message
+2026-06-30 10:51:52,985 | ERROR | This is an error message
+2026-06-30 11:14:24,183 | INFO | Received transaction for prediction
+2026-06-30 11:14:24,321 | INFO | Prediction Completed | Transaction=N/A | Prediction=Legitimate | Confidence=0.9900
+2026-06-30 11:23:35,721 | INFO | Received transaction for prediction
+2026-06-30 11:23:35,721 | ERROR | Prediction Failed: Unknown transaction type: payment
+2026-06-30 11:27:00,780 | INFO | Received transaction for prediction
+2026-06-30 11:27:00,898 | INFO | Prediction Completed | Transaction=N/A | Prediction=Legitimate | Confidence=0.9400
+2026-06-30 11:30:55,065 | INFO | Received transaction for prediction
+2026-06-30 11:30:55,175 | INFO | Prediction Completed | Transaction=N/A | Prediction=Legitimate | Confidence=0.7300
+2026-06-30 11:35:09,122 | INFO | Received transaction for prediction
+2026-06-30 11:35:09,229 | INFO | Prediction Completed | Transaction=N/A | Prediction=Legitimate | Confidence=0.7300
+2026-06-30 11:36:01,577 | INFO | Received transaction for prediction
+2026-06-30 11:36:01,681 | INFO | Prediction Completed | Transaction=N/A | Prediction=Fraud | Confidence=0.9900

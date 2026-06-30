@@ -16,7 +16,7 @@ python3 consumer/consumer.py --group-id my-test-group
 
 Press Ctrl-C at any time to stop cleanly.
 """
-
+from config.logger import logger
 from __future__ import annotations
 
 import argparse
@@ -43,18 +43,6 @@ from config.consumer_config import (  # noqa: E402
     CONSUMER_MAX_RECORDS,
     CONSUMER_TOPIC,
 )
-
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger("fraud-consumer")
-
-
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------

@@ -26,6 +26,7 @@ python3 producer/producer.py --create-topic --continuous
 """
 
 from __future__ import annotations
+from config.logger import logger
 
 import argparse
 import json
@@ -63,23 +64,6 @@ from config.producer_config import (  # noqa: E402
     PRODUCER_STREAM_DELAY,
     PRODUCER_TOPIC,
 )
-
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger("fraud-producer")
-
-# ---------------------------------------------------------------------------
-# Retry settings for per-message send failures
-# ---------------------------------------------------------------------------
-_SEND_MAX_ATTEMPTS = 3
-_SEND_RETRY_BASE_DELAY = 1.0  # seconds; doubles on each retry
-
 
 # ---------------------------------------------------------------------------
 # CLI
