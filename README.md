@@ -316,6 +316,7 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 5**: Kafka consumer and end-to-end streaming validation ✅
 - **Day 6**: Continuous producer, UUIDs, timestamps, batching, compression, retries ✅
 - **Day 7**: Streaming pipeline validation, throughput and lag tracking, infrastructure integration testing, and project layout cleanup ✅
+- **Day 8**: Historical dataset preparation, cleaning, categorical encoding, scaling, and train-test split ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -341,4 +342,30 @@ At the end of Week 1, the pipeline architecture consists of:
 [Python Consumer (group tracking, auto-commit, throughput/lag logging)]
 ```
 
-All Docker-managed resources (Zookeeper, Kafka, MongoDB, Kafka-UI) are fully verified and integrated. We are ready to proceed to Week 2's model training phase!
+All Docker-managed resources (Zookeeper, Kafka, MongoDB, Kafka-UI) are fully verified and integrated.
+
+## Week 2: Historical Data Preparation & Model Training
+
+### Day 8: Data Preprocessing Pipeline
+We developed a modular, reusable preprocessing script at `models/training/preprocess.py` to prepare historical data for model training.
+
+#### Preprocessing Steps:
+1. **Load Data**: Reads `data/historical/paysim.csv` in chunks/entirety.
+2. **Data Cleaning**:
+   - Drops duplicate rows.
+   - Removes transaction identifier/rule columns that can cause overfitting: `nameOrig`, `nameDest`, and `isFlaggedFraud`.
+3. **Categorical Encoding**:
+   - Encodes categorical `type` column using dummy encoding with drop-first strategy (`pd.get_dummies(..., drop_first=True)`).
+   - Generates numeric dummy columns: `type_CASH_OUT`, `type_DEBIT`, `type_PAYMENT`, `type_TRANSFER`.
+4. **Feature Scaling**:
+   - Fits `StandardScaler` from scikit-learn on input features `X`.
+   - Saves the fitted scaler to `models/scaler.pkl`. (The same scaler is reused during real-time streaming feature scaling).
+5. **Stratified Split**:
+   - Performs a train-test split (80% training, 20% testing) with stratified distribution to handle extreme class imbalance (0.13% fraud cases).
+6. **Export processed files**:
+   - Saves final preprocessed datasets to `data/processed/` as:
+     - `X_train.csv` (80,000 samples)
+     - `X_test.csv` (20,000 samples)
+     - `y_train.csv`
+     - `y_test.csv`
+
