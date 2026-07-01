@@ -23,6 +23,7 @@ import argparse
 import json
 import logging
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -130,6 +131,24 @@ def format_transaction(transaction: dict[str, Any], pretty: bool = False) -> str
     )
 
 
+def get_total_lag(consumer: KafkaConsumer) -> int:
+    """Query the broker for end offsets and compute the consumer's total lag."""
+    try:
+        partitions = consumer.assignment()
+        if not partitions:
+            return 0
+        end_offsets = consumer.end_offsets(partitions)
+        total_lag = 0
+        for tp in partitions:
+            current_pos = consumer.position(tp)
+            end_offset = end_offsets.get(tp, 0)
+            total_lag += max(0, end_offset - current_pos)
+        return total_lag
+    except Exception as e:
+        logger.warning("Could not calculate consumer lag: %s", e)
+        return 0
+
+
 # ---------------------------------------------------------------------------
 # Main consume loop
 # ---------------------------------------------------------------------------
@@ -155,6 +174,10 @@ def consume(args: argparse.Namespace) -> int:
 
     consumed = 0
 
+    # Throughput & lag tracking
+    last_throughput_time = time.time()
+    consumed_in_interval = 0
+
     try:
         for message in consumer:
             transaction: dict[str, Any] = message.value
@@ -175,6 +198,22 @@ def consume(args: argparse.Namespace) -> int:
             print(format_transaction(transaction, pretty=args.pretty))
 
             consumed += 1
+            consumed_in_interval += 1
+
+            # Periodic throughput and lag log (every 60 seconds)
+            now = time.time()
+            elapsed = now - last_throughput_time
+            if elapsed >= 60.0:
+                throughput = (consumed_in_interval / elapsed) * 60
+                lag = get_total_lag(consumer)
+                logger.info(
+                    "Throughput: %.2f transactions/min  |  Consumer Lag: %d messages  |  Total consumed: %d",
+                    throughput,
+                    lag,
+                    consumed,
+                )
+                last_throughput_time = now
+                consumed_in_interval = 0
 
             # --- Optional early exit -------------------------------------------
             if args.max_records and consumed >= args.max_records:

@@ -307,25 +307,38 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 | Linger | `PRODUCER_LINGER_MS` | `5` | ms to wait before sending batch |
 | Compression | `PRODUCER_COMPRESSION_TYPE` | `gzip` | Network compression |
 | Retries | `PRODUCER_RETRIES` | `5` | Auto-retry count |
-
 ## Current Progress
 
-- **Day 1**: Environment setup and Docker infrastructure
-- **Day 2**: PaySim dataset generation and fraud EDA
-- **Day 3**: Fraud pattern investigation and feature engineering
-- **Day 4**: Kafka fundamentals and transaction producer
+- **Day 1**: Environment setup and Docker infrastructure ✅
+- **Day 2**: PaySim dataset generation and fraud EDA ✅
+- **Day 3**: Fraud pattern investigation and feature engineering ✅
+- **Day 4**: Kafka fundamentals and transaction producer ✅
 - **Day 5**: Kafka consumer and end-to-end streaming validation ✅
 - **Day 6**: Continuous producer, UUIDs, timestamps, batching, compression, retries ✅
+- **Day 7**: Streaming pipeline validation, throughput and lag tracking, infrastructure integration testing, and project layout cleanup ✅
 
-## Next Step
+## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
-Day 7 concludes Week 1 with **Streaming Pipeline Validation & Infrastructure Testing**:
+### Throughput Tracking
+Both the Python Producer and Consumer now track real-time throughput. Every 60 seconds of processing, they calculate and log the message rate (transactions per minute) and overall status.
+- **Producer Log format**: `Throughput: X.XX transactions/min (Total sent: Y)`
+- **Consumer Log format**: `Throughput: X.XX transactions/min  |  Consumer Lag: Y messages  |  Total consumed: Z`
 
+### Consumer Lag Detection
+The consumer queries partition offsets programmatically from the Kafka broker to compute the consumer group lag (`log_end_offset - current_position`).
+This helps monitor how well the consumer is keeping pace with the producer in real-time, which is crucial for operational stability.
+
+## Week 1 Retrospective & Architecture Review
+
+At the end of Week 1, the pipeline architecture consists of:
 ```text
-End-to-end pipeline validation
-Kafka throughput testing
-Consumer lag and offsets
-Pipeline health checks
-Project architecture review
-Week 1 integration testing
+[PaySim Historical CSV]
+        ↓ (Read by pandas)
+[Python Producer (continuous simulator, batching/compression, uuid/timestamp enriched)]
+        ↓ (TCP / JSON serialize)
+[Kafka Topic: transactions (single partition, confluent-kafka broker)]
+        ↓ (TCP / JSON deserialize)
+[Python Consumer (group tracking, auto-commit, throughput/lag logging)]
 ```
+
+All Docker-managed resources (Zookeeper, Kafka, MongoDB, Kafka-UI) are fully verified and integrated. We are ready to proceed to Week 2's model training phase!

@@ -296,6 +296,10 @@ def stream_transactions(args: argparse.Namespace) -> int:
     total_sent = 0
     cycle = 0
 
+    # Throughput tracking
+    last_throughput_time = time.time()
+    sent_in_interval = 0
+
     try:
         while True:
             cycle += 1
@@ -321,6 +325,7 @@ def stream_transactions(args: argparse.Namespace) -> int:
                 try:
                     metadata = send_with_retry(producer, args.topic, message, tx_id)
                     total_sent += 1
+                    sent_in_interval += 1
                     logger.info(
                         "Sent transaction %s  [%s]  amount=%.2f  fraud=%s  "
                         "→ %s[%d] offset %d",
@@ -336,6 +341,19 @@ def stream_transactions(args: argparse.Namespace) -> int:
                     logger.error(
                         "Dropping transaction %s after all retries: %s", tx_id, exc
                     )
+
+                # Periodic throughput log (every 60 seconds)
+                now = time.time()
+                elapsed = now - last_throughput_time
+                if elapsed >= 60.0:
+                    throughput = (sent_in_interval / elapsed) * 60
+                    logger.info(
+                        "Throughput: %.2f transactions/min (Total sent: %d)",
+                        throughput,
+                        total_sent,
+                    )
+                    last_throughput_time = now
+                    sent_in_interval = 0
 
                 # Throttle
                 if args.delay > 0:
