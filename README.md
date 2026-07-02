@@ -368,4 +368,17 @@ We developed a modular, reusable preprocessing script at `models/training/prepro
      - `X_test.csv` (20,000 samples)
      - `y_train.csv`
      - `y_test.csv`
+## Historical Data Preprocessing
+
+The preprocessing pipeline performs:
+
+- Dataset validation
+- Duplicate removal
+- Missing value handling
+- Label encoding of transaction type
+- Removal of high-cardinality identifier columns
+- Saving processed dataset for model training
+
+Output:
+data/processed/processed_paysim.csv
 
