@@ -1,0 +1,32 @@
+{
+    "model_name": "Isolation Forest Anomaly Detector",
+    "algorithm": "sklearn.ensemble.IsolationForest",
+    "training_timestamp_utc": "2026-07-03T05:33:40.668598+00:00",
+    "parameters": {
+        "contamination": 0.001,
+        "n_estimators": 100,
+        "random_state": 42
+    },
+    "dataset_version": "PaySim Subset Day 8 Preprocessed",
+    "training_rows": 80000,
+    "test_rows": 20000,
+    "feature_count": 10,
+    "feature_names": [
+        "step",
+        "amount",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "type_CASH_OUT",
+        "type_DEBIT",
+        "type_PAYMENT",
+        "type_TRANSFER"
+    ],
+    "prediction_summary": {
+        "predicted_normal": 19984,
+        "predicted_fraud": 16,
+        "actual_normal": 19974,
+        "actual_fraud": 26
+    }
+}

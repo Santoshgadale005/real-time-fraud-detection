@@ -317,6 +317,7 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 6**: Continuous producer, UUIDs, timestamps, batching, compression, retries ✅
 - **Day 7**: Streaming pipeline validation, throughput and lag tracking, infrastructure integration testing, and project layout cleanup ✅
 - **Day 8**: Historical dataset preparation, cleaning, categorical encoding, scaling, and train-test split ✅
+- **Day 9**: Isolation Forest unsupervised model training, anomaly predictions and scoring, and model serialization ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -382,3 +383,33 @@ The preprocessing pipeline performs:
 Output:
 data/processed/processed_paysim.csv
 
+### Day 9: Anomaly Detection with Isolation Forest
+We created a modular, reusable model training script at `models/training/train_isolation_forest.py` to train an unsupervised Isolation Forest anomaly detection model on historical data.
+
+Run training:
+
+```bash
+venv/bin/python3 models/training/train_isolation_forest.py
+```
+
+#### Isolation Forest Parameters:
+* `contamination`: `0.001` (representing expected ratio of anomalies/fraud cases)
+* `n_estimators`: `100` (number of trees to build in the forest)
+* `random_state`: `42` (ensures reproducible results)
+
+#### Prediction Process:
+* Unsupervised fitting is performed on `X_train.csv`.
+* Prediction outputs of `1` (normal) and `-1` (anomaly) are mapped to standard binary labels: `1` for anomaly/fraud, `0` for normal.
+* Decision function scores are generated to provide an anomaly score: more negative values denote highly suspicious anomalies.
+
+#### Generated Artifacts:
+* **Trained model binary**: `models/isolation_forest.pkl` (loaded dynamically in Week 3 streaming jobs)
+* **Model Metadata JSON**: `models/model_info.json`
+* **Output test predictions**: `data/results/fraud_predictions.csv`
+
+#### Baseline Output:
+* Training rows: `80,000`
+* Test rows: `20,000`
+* Predicted anomalies/frauds: `16`
+* Actual frauds in test set: `26`
+* Next step: evaluate precision, recall, F1 score, ROC curve, and confusion matrix on Day 10.
