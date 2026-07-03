@@ -413,3 +413,24 @@ venv/bin/python3 models/training/train_isolation_forest.py
 * Predicted anomalies/frauds: `16`
 * Actual frauds in test set: `26`
 * Next step: evaluate precision, recall, F1 score, ROC curve, and confusion matrix on Day 10.
+## Model Performance
+
+### Algorithm
+Random Forest Classifier
+
+### Dataset
+PaySim Fraud Detection Dataset
+
+### Evaluation Metrics
+
+- Accuracy: 99.97%
+- Precision: 98%
+- Recall: 78%
+- F1 Score: 87%
+
+### Confusion Matrix
+
+|               | Predicted Legit | Predicted Fraud |
+|---------------|----------------:|----------------:|
+| Actual Legit  | 1,270,853 | 28 |
+| Actual Fraud  | 354 | 1,289 |
