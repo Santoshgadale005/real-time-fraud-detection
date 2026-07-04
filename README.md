@@ -318,6 +318,7 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 7**: Streaming pipeline validation, throughput and lag tracking, infrastructure integration testing, and project layout cleanup ✅
 - **Day 8**: Historical dataset preparation, cleaning, categorical encoding, scaling, and train-test split ✅
 - **Day 9**: Isolation Forest unsupervised model training, anomaly predictions and scoring, and model serialization ✅
+- **Day 10**: Initial model evaluation, metrics calculation, confusion matrix generation, and baseline performance report ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -412,61 +413,32 @@ venv/bin/python3 models/training/train_isolation_forest.py
 * Test rows: `20,000`
 * Predicted anomalies/frauds: `16`
 * Actual frauds in test set: `26`
-* Next step: evaluate precision, recall, F1 score, ROC curve, and confusion matrix on Day 10.
+* Next step: evaluate precision, recall, F1 score, and confusion matrix on Day 10.
 
-## Model Performance
+### Day 10: Initial Model Evaluation & Performance Analysis
+We created a reusable evaluation module at `models/evaluation/evaluate_model.py` to measure the Isolation Forest baseline using fraud-focused classification metrics.
 
-### Algorithm
-Random Forest Classifier
+Run evaluation:
 
-### Dataset
-PaySim Fraud Detection Dataset
+```bash
+venv/bin/python models/evaluation/evaluate_model.py
+```
 
-### Evaluation Metrics
+#### Evaluation Metrics:
+* `accuracy`: `0.998000`
+* `precision`: `0.062500`
+* `recall`: `0.038462`
+* `f1_score`: `0.047619`
 
-- Accuracy: 99.97%
-- Precision: 98%
-- Recall: 78%
-- F1 Score: 87%
+#### Confusion Matrix:
 
-### Confusion Matrix
+| Actual / Predicted | Normal | Fraud |
+|--------------------|--------|-------|
+| Actual Normal | `19959` | `15` |
+| Actual Fraud | `25` | `1` |
 
-|               | Predicted Legit | Predicted Fraud |
-|---------------|----------------:|----------------:|
-| Actual Legit  | 1,270,853 | 28 |
-| Actual Fraud  | 354 | 1,289 |
-=======
-# Real-Time Fraud Detection System
+#### Generated Evaluation Artifacts:
+* **Metrics CSV**: `data/results/model_metrics.csv`
+* **Confusion matrix image**: `data/results/confusion_matrix.png`
+* **Evaluation summary**: `docs/evaluation_summary.md`
 
-## Project Overview
-A machine learning-powered fraud detection system using FastAPI, Kafka, Docker, and Isolation Forest.
-
-## Features
-- Real-time transaction prediction
-- Machine learning model
-- Kafka producer & consumer
-- REST API using FastAPI
-- Docker support
-- GitHub Actions CI
-- Logging
-
-## Tech Stack
-- Python
-- FastAPI
-- Scikit-learn
-- Kafka
-- Docker
-- GitHub Actions
-
-## Project Structure
-
-## Installation
-
-## Running the API
-
-## Docker Usage
-
-## API Endpoints
-
-## Future Improvements
-(Day 11: Added GitHub Actions CI, Docker support, and project improvements)
