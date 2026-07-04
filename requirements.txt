@@ -2,11 +2,8 @@ fastapi
 uvicorn
 pandas
 numpy
-scikit-learn==1.3.2
+scikit-learn
+joblib
 kafka-python
-pymongo
-pyspark
-matplotlib
-seaborn
-jupyter
+pydantic
 python-dotenv

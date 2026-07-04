@@ -1,19 +1,35 @@
-venv/
-.env
+# Python
 __pycache__/
-.ipynb_checkpoints/
 *.pyc
-.DS_Store
-data/*.csv
-data/*.json
-# Dataset
-data/raw/
-*.csv
 
-# Processed data
-data/processed/
+# Logs
+*.log
+logs/
 
-# Jupyter checkpoints
+# Environment
+.env
+.venv/
+venv/
+
+# Jupyter
 .ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Docker
+*.pid
+# Large datasets
 data/raw/paysim.csv
-data/processed/
+data/processed/processed_paysim.csv
+
+# Models
+models/*.pkl
+
+# Logs
+*.log
+logs/

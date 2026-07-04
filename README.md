@@ -413,6 +413,7 @@ venv/bin/python3 models/training/train_isolation_forest.py
 * Predicted anomalies/frauds: `16`
 * Actual frauds in test set: `26`
 * Next step: evaluate precision, recall, F1 score, ROC curve, and confusion matrix on Day 10.
+
 ## Model Performance
 
 ### Algorithm
@@ -434,3 +435,38 @@ PaySim Fraud Detection Dataset
 |---------------|----------------:|----------------:|
 | Actual Legit  | 1,270,853 | 28 |
 | Actual Fraud  | 354 | 1,289 |
+=======
+# Real-Time Fraud Detection System
+
+## Project Overview
+A machine learning-powered fraud detection system using FastAPI, Kafka, Docker, and Isolation Forest.
+
+## Features
+- Real-time transaction prediction
+- Machine learning model
+- Kafka producer & consumer
+- REST API using FastAPI
+- Docker support
+- GitHub Actions CI
+- Logging
+
+## Tech Stack
+- Python
+- FastAPI
+- Scikit-learn
+- Kafka
+- Docker
+- GitHub Actions
+
+## Project Structure
+
+## Installation
+
+## Running the API
+
+## Docker Usage
+
+## API Endpoints
+
+## Future Improvements
+(Day 11: Added GitHub Actions CI, Docker support, and project improvements)
