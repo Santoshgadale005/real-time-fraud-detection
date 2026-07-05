@@ -1,11 +1,36 @@
 {
-    "model_name": "Isolation Forest Anomaly Detector",
+    "model_name": "Optimized Isolation Forest Anomaly Detector",
     "algorithm": "sklearn.ensemble.IsolationForest",
-    "training_timestamp_utc": "2026-07-03T05:33:40.668598+00:00",
+    "stage": "optimized",
+    "optimization_date_utc": "2026-07-05T01:48:02.128728+00:00",
     "parameters": {
+        "contamination": 0.005,
+        "n_estimators": 300,
+        "max_samples": 50000,
+        "max_features": 1.0
+    },
+    "baseline_parameters": {
         "contamination": 0.001,
         "n_estimators": 100,
-        "random_state": 42
+        "max_samples": "auto",
+        "max_features": 1.0
+    },
+    "baseline_metrics": {
+        "accuracy": 0.998,
+        "precision": 0.0625,
+        "recall": 0.038462,
+        "f1_score": 0.047619
+    },
+    "optimized_metrics": {
+        "accuracy": 0.9939,
+        "precision": 0.029412,
+        "recall": 0.115385,
+        "f1_score": 0.046875,
+        "true_positives": 3,
+        "false_negatives": 23,
+        "false_positives": 99,
+        "true_negatives": 19875,
+        "predicted_frauds": 102
     },
     "dataset_version": "PaySim Subset Day 8 Preprocessed",
     "training_rows": 80000,
@@ -23,10 +48,5 @@
         "type_PAYMENT",
         "type_TRANSFER"
     ],
-    "prediction_summary": {
-        "predicted_normal": 19984,
-        "predicted_fraud": 16,
-        "actual_normal": 19974,
-        "actual_fraud": 26
-    }
+    "model_path": "models/best_isolation_forest.pkl"
 }

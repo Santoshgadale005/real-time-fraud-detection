@@ -319,6 +319,7 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 8**: Historical dataset preparation, cleaning, categorical encoding, scaling, and train-test split ✅
 - **Day 9**: Isolation Forest unsupervised model training, anomaly predictions and scoring, and model serialization ✅
 - **Day 10**: Initial model evaluation, metrics calculation, confusion matrix generation, and baseline performance report ✅
+- **Day 11**: False Negative analysis, Isolation Forest hyperparameter grid search (20 experiments), best model selection, and optimization documentation ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -442,3 +443,41 @@ venv/bin/python models/evaluation/evaluate_model.py
 * **Confusion matrix image**: `data/results/confusion_matrix.png`
 * **Evaluation summary**: `docs/evaluation_summary.md`
 
+### Day 11: False Negative Analysis & Isolation Forest Optimization
+We built a systematic optimization pipeline at `models/optimization/optimize_model.py` that analyses missed fraud transactions and runs a hyperparameter grid search across 20 Isolation Forest configurations.
+
+Run optimization:
+
+```bash
+venv/bin/python models/optimization/optimize_model.py
+```
+
+#### Hyperparameter Search Grid:
+| Parameter | Values Tested |
+|-----------|---------------|
+| `contamination` | `0.001`, `0.002`, `0.005`, `0.010` |
+| `n_estimators` | `100`, `200`, `300` |
+| `max_samples` | `auto`, `10000`, `50000` |
+| `max_features` | `1.0`, `0.8`, `0.6` |
+
+#### Best Model Configuration (M18):
+* `contamination`: `0.005`
+* `n_estimators`: `300`
+* `max_samples`: `50000`
+* `max_features`: `1.0`
+
+#### Baseline vs Optimized Performance:
+| Metric | Baseline | Optimized |
+|--------|----------|-----------|
+| Recall | `0.038462` | **`0.115385`** (3× improvement) |
+| False Negatives | `25` | **`23`** (-2 missed frauds) |
+| True Positives | `1` | **`3`** |
+| False Positives | `15` | `99` |
+
+#### Generated Optimization Artifacts:
+* **Best model**: `models/best_isolation_forest.pkl`
+* **Comparison table**: `data/results/model_comparison.csv`
+* **Optimized confusion matrix**: `data/results/optimized_confusion_matrix.png`
+* **Score distribution plot**: `data/results/optimization_plots/false_negative_score_distribution.png`
+* **Recall vs contamination plot**: `data/results/optimization_plots/recall_by_contamination.png`
+* **Optimization report**: `docs/model_optimization.md`
