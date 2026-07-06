@@ -527,3 +527,8 @@ venv/bin/python models/comparison/compare_models.py
 * **Final comparison CSV**: `data/results/final_model_comparison.csv`
 * **Final evaluation report**: `docs/final_model_report.md`
 
+## 🌐 Live Demo
+
+- **API:** https://real-time-fraud-detection-z7qr.onrender.com
+- **Swagger UI:** https://real-time-fraud-detection-z7qr.onrender.com/docs
+
