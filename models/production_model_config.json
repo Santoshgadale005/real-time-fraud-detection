@@ -1,0 +1,51 @@
+{
+    "model_name": "Production Isolation Forest (Optimized Configuration)",
+    "algorithm": "sklearn.ensemble.IsolationForest",
+    "stage": "production",
+    "selected_model": "optimized",
+    "selection_date_utc": "2026-07-06T04:35:33.321847+00:00",
+    "parameters": {
+        "contamination": 0.005,
+        "n_estimators": 300,
+        "max_samples": 50000,
+        "max_features": 1.0,
+        "random_state": 42
+    },
+    "metrics": {
+        "accuracy": 0.9939,
+        "precision": 0.029412,
+        "recall": 0.115385,
+        "f1_score": 0.046875,
+        "true_positives": 3,
+        "false_negatives": 23,
+        "false_positives": 99,
+        "true_negatives": 19875
+    },
+    "stability": {
+        "n_runs": 3,
+        "recall_std": 0.0,
+        "is_stable": true
+    },
+    "performance": {
+        "training_time_seconds": 1.4134,
+        "prediction_time_seconds": 0.223,
+        "per_transaction_ms": 0.011151,
+        "throughput_per_second": 89681.05
+    },
+    "feature_names": [
+        "step",
+        "amount",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "type_CASH_OUT",
+        "type_DEBIT",
+        "type_PAYMENT",
+        "type_TRANSFER"
+    ],
+    "feature_count": 10,
+    "model_path": "models/production_model.pkl",
+    "scaler_path": "models/scaler.pkl",
+    "deployment_ready": true
+}

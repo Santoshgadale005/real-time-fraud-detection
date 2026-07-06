@@ -320,6 +320,7 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 9**: Isolation Forest unsupervised model training, anomaly predictions and scoring, and model serialization ✅
 - **Day 10**: Initial model evaluation, metrics calculation, confusion matrix generation, and baseline performance report ✅
 - **Day 11**: False Negative analysis, Isolation Forest hyperparameter grid search (20 experiments), best model selection, and optimization documentation ✅
+- **Day 12**: Final model comparison, validation, production model selection, feature contribution analysis, and deployment preparation ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -481,3 +482,48 @@ venv/bin/python models/optimization/optimize_model.py
 * **Score distribution plot**: `data/results/optimization_plots/false_negative_score_distribution.png`
 * **Recall vs contamination plot**: `data/results/optimization_plots/recall_by_contamination.png`
 * **Optimization report**: `docs/model_optimization.md`
+
+### Day 12: Final Model Comparison, Validation & Production Model Selection
+We built a comprehensive model comparison pipeline at `models/comparison/compare_models.py` that evaluates the Baseline vs Optimized Isolation Forest, validates stability, measures performance, and selects the production-ready model.
+
+Run comparison:
+
+```bash
+venv/bin/python models/comparison/compare_models.py
+```
+
+#### Performance Comparison:
+| Metric | Baseline | Optimized | Change |
+|--------|----------|-----------|--------|
+| Accuracy | `0.998000` | `0.993900` | -0.004100 |
+| Precision | `0.062500` | `0.029412` | -0.033088 |
+| Recall | `0.038462` | **`0.115385`** | **+0.076923 (3× improvement)** |
+| F1 Score | `0.047619` | `0.046875` | ≈same |
+| False Negatives | `25` | **`23`** | **-2 fewer missed** |
+| True Positives | `1` | **`3`** | **+2 more caught** |
+
+#### Production Model Configuration:
+| Parameter | Value |
+|-----------|-------|
+| `contamination` | `0.005` |
+| `n_estimators` | `300` |
+| `max_samples` | `50000` |
+| `max_features` | `1.0` |
+| `random_state` | `42` |
+
+#### Processing Performance:
+| Metric | Value |
+|--------|-------|
+| Training time | `1.41` seconds |
+| Per-transaction inference | `0.011` ms |
+| Throughput | **89,681 transactions/second** |
+
+#### Generated Day 12 Artifacts:
+* **Production model**: `models/production_model.pkl`
+* **Production config**: `models/production_model_config.json`
+* **Performance comparison plot**: `data/results/comparison_plots/performance_comparison.png`
+* **Confusion matrix comparison**: `data/results/comparison_plots/confusion_matrices_comparison.png`
+* **Feature contribution plot**: `data/results/comparison_plots/feature_contribution.png`
+* **Final comparison CSV**: `data/results/final_model_comparison.csv`
+* **Final evaluation report**: `docs/final_model_report.md`
+

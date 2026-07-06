@@ -1,0 +1,3 @@
+Model,Accuracy,Precision,Recall,F1_Score,True_Positives,False_Negatives,False_Positives,True_Negatives
+Baseline,0.998,0.0625,0.038462,0.047619,1,25,15,19959
+Optimized,0.9939,0.029412,0.115385,0.046875,3,23,99,19875
