@@ -1,0 +1,69 @@
+{
+    "model_name": "Isolation Forest Fraud Detector",
+    "version": "1.0.0",
+    "algorithm": "sklearn.ensemble.IsolationForest",
+    "stage": "production",
+    "training_date": "2026-07-06",
+    "training_date_utc": "2026-07-06T04:35:33.321847+00:00",
+    "dataset": "PaySim Historical Transactions (100,000 samples)",
+    "random_seed": 42,
+    "contamination": 0.005,
+    "n_estimators": 300,
+    "max_samples": 50000,
+    "max_features": 1.0,
+    "evaluation_metrics": {
+        "accuracy": 0.9939,
+        "precision": 0.029412,
+        "recall": 0.115385,
+        "f1_score": 0.046875,
+        "true_positives": 3,
+        "false_negatives": 23,
+        "false_positives": 99,
+        "true_negatives": 19875
+    },
+    "performance": {
+        "training_time_seconds": 1.4134,
+        "per_transaction_inference_ms": 0.011151,
+        "throughput_per_second": 89681.05
+    },
+    "feature_list": [
+        "step",
+        "amount",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "type_CASH_OUT",
+        "type_DEBIT",
+        "type_PAYMENT",
+        "type_TRANSFER"
+    ],
+    "feature_count": 10,
+    "input_schema": {
+        "step":           {"type": "numeric", "description": "Transaction step (hour of simulation)"},
+        "amount":         {"type": "numeric", "description": "Transaction amount in local currency"},
+        "oldbalanceOrg":  {"type": "numeric", "description": "Sender balance before transaction"},
+        "newbalanceOrig": {"type": "numeric", "description": "Sender balance after transaction"},
+        "oldbalanceDest": {"type": "numeric", "description": "Receiver balance before transaction"},
+        "newbalanceDest": {"type": "numeric", "description": "Receiver balance after transaction"},
+        "type_CASH_OUT":  {"type": "binary", "values": [0, 1], "description": "1 if transaction type is CASH_OUT"},
+        "type_DEBIT":     {"type": "binary", "values": [0, 1], "description": "1 if transaction type is DEBIT"},
+        "type_PAYMENT":   {"type": "binary", "values": [0, 1], "description": "1 if transaction type is PAYMENT"},
+        "type_TRANSFER":  {"type": "binary", "values": [0, 1], "description": "1 if transaction type is TRANSFER"}
+    },
+    "output_schema": {
+        "prediction":    {"type": "integer", "values": [0, 1], "description": "1 = fraud/anomaly, 0 = normal"},
+        "anomaly_score": {"type": "float", "description": "Decision function score (more negative = more anomalous)"},
+        "is_fraud":      {"type": "boolean", "description": "True if prediction is fraud"},
+        "label":         {"type": "string", "values": ["FRAUD", "NORMAL"], "description": "Human-readable prediction label"}
+    },
+    "artifacts": {
+        "model_file":  "production_model.pkl",
+        "scaler_file": "scaler.pkl",
+        "config_file": "model_config.json",
+        "predict_module": "predict.py"
+    },
+    "deployment_ready": true,
+    "spark_compatible": true,
+    "notes": "Model uses StandardScaler for preprocessing. Always apply scaler before model inference. Feature order is fixed and must match training order exactly."
+}

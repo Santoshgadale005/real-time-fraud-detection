@@ -321,6 +321,7 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 10**: Initial model evaluation, metrics calculation, confusion matrix generation, and baseline performance report ✅
 - **Day 11**: False Negative analysis, Isolation Forest hyperparameter grid search (20 experiments), best model selection, and optimization documentation ✅
 - **Day 12**: Final model comparison, validation, production model selection, feature contribution analysis, and deployment preparation ✅
+- **Day 13**: Production validation, reusable prediction module, end-to-end inference pipeline, deployment artifact packaging, and feature validation checks ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -527,8 +528,79 @@ venv/bin/python models/comparison/compare_models.py
 * **Final comparison CSV**: `data/results/final_model_comparison.csv`
 * **Final evaluation report**: `docs/final_model_report.md`
 
-## 🌐 Live Demo
+### Day 13: Production Validation & Deployment Readiness
 
-- **API:** https://real-time-fraud-detection-z7qr.onrender.com
-- **Swagger UI:** https://real-time-fraud-detection-z7qr.onrender.com/docs
+We built the complete inference pipeline, packaged all deployment artifacts, and ran a
+9-step end-to-end validation to confirm the model is ready for Spark Structured Streaming.
 
+Run validation:
+
+```bash
+venv/bin/python deployment/scripts/validate_pipeline.py
+```
+
+#### Final Model Selected
+
+**Optimized Isolation Forest v1.0.0** (`models/production_model.pkl`)
+
+| Parameter | Value |
+|-----------|-------|
+| `contamination` | `0.005` |
+| `n_estimators` | `300` |
+| `max_samples` | `50000` |
+| `random_state` | `42` |
+
+#### Evaluation Summary
+
+| Metric | Value |
+|--------|-------|
+| Accuracy | `0.9939` |
+| Precision | `0.0294` |
+| Recall | `0.1154` (3× baseline) |
+| F1 Score | `0.0469` |
+| False Negatives | `23` (vs 25 baseline) |
+| Throughput | **89,681 txn/sec** |
+
+#### Prediction Workflow
+
+```
+Transaction Dictionary
+        ↓
+validate_features()   — checks missing/extra/wrong-type columns
+        ↓
+Feature Ordering      — enforces EXPECTED_FEATURES order
+        ↓
+scaler.transform()    — StandardScaler (same as training)
+        ↓
+model.predict()       — Isolation Forest anomaly detection
+        ↓
+Output: { prediction, anomaly_score, is_fraud, label }
+```
+
+#### Deployment Artifacts
+
+| Artifact | Path |
+|----------|------|
+| Production model | `models/production_model.pkl` |
+| Fitted scaler | `models/scaler.pkl` |
+| Prediction module | `models/predict.py` |
+| Deployment config | `deployment/config/model_config.json` |
+| Packaged artifacts | `deployment/artifacts/` |
+| Validation script | `deployment/scripts/validate_pipeline.py` |
+| Deployment README | `deployment/README.md` |
+
+#### Day 13 Validation Results
+
+```
+✅ PASSED  Artifact Loading
+✅ PASSED  Normal Transaction Prediction
+✅ PASSED  Fraud Transaction Prediction
+✅ PASSED  Batch Predictions (100 / 500 / 1000)
+✅ PASSED  Prediction Consistency (deterministic)
+✅ PASSED  Inference Latency
+✅ PASSED  Feature Order Validation
+✅ PASSED  Feature Validation Function
+✅ PASSED  Full Pipeline Validation
+
+🎉 9/9 STEPS PASSED
+```
