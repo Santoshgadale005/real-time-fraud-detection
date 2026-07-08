@@ -614,3 +614,33 @@ Features:
 - Confidence distribution
 - Prediction trends
 - API health endpoint
+## Model Metadata API
+
+### GET /metadata
+
+Returns the deployed model information.
+
+Example Response
+
+```json
+{
+  "model_name": "Real-Time Fraud Detection",
+  "version": "1.0.0",
+  "algorithm": "Random Forest",
+  "trained_on": "2026-07-08",
+  "accuracy": 0.9989,
+  "status": "Production"
+}
+```
+
+## Health Check
+
+### GET /health
+
+```json
+{
+  "status": "healthy",
+  "model_loaded": true,
+  "version": "1.0.0"
+}
+```

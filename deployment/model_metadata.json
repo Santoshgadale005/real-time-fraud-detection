@@ -1,0 +1,8 @@
+{
+    "model_name": "Real-Time Fraud Detection",
+    "version": "1.0.0",
+    "algorithm": "Random Forest",
+    "trained_on": "2026-07-08",
+    "accuracy": 0.9989,
+    "status": "Production"
+}
