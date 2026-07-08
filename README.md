@@ -322,6 +322,9 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 11**: False Negative analysis, Isolation Forest hyperparameter grid search (20 experiments), best model selection, and optimization documentation ✅
 - **Day 12**: Final model comparison, validation, production model selection, feature contribution analysis, and deployment preparation ✅
 - **Day 13**: Production validation, reusable prediction module, end-to-end inference pipeline, deployment artifact packaging, and feature validation checks ✅
+- **Day 14**: Model serialization, versioning, deployment preparation, and Spark-ready service package ✅
+- **Day 15**: Apache Spark setup, Kafka connection integration, binary payload schema parsing, and Structured Streaming console sinks ✅
+- **Day 16**: Spark Structured Streaming data processing, feature engineering recreation, mathematical StandardScaler scaling, and validation parity tests ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -614,6 +617,7 @@ Features:
 - Confidence distribution
 - Prediction trends
 - API health endpoint
+
 ## Model Metadata API
 
 ### GET /metadata
@@ -644,3 +648,20 @@ Example Response
   "version": "1.0.0"
 }
 ```
+
+### Day 15: Apache Spark Setup & Kafka Integration
+
+We integrated PySpark Structured Streaming with our Kafka broker:
+- Configured a local Spark Session running with `spark-sql-kafka-0-10_2.13:3.5.0` dependencies.
+- Defined a structured transaction schema `TRANSACTION_SCHEMA` mirroring the 12 fields of raw PaySim transactions.
+- Created `spark/kafka_reader.py` to ingest, cast, and deserialize incoming JSON streams.
+
+### Day 16: Structured Streaming Data Processing & Feature Pipeline
+
+We built a high-performance feature preprocessing pipeline in PySpark (`spark/preprocessing.py`):
+- Filtered out invalid transactions (e.g., negative amounts or null fields).
+- Recreated engineered features (`origin_balance_diff`, `dest_balance_diff`, `amount_balance_ratio`, `account_drained`, `high_value_txn`).
+- Created one-hot dummy variables for categorical types (`type_CASH_OUT`, `type_DEBIT`, `type_PAYMENT`, `type_TRANSFER`).
+- Loaded the fitted StandardScaler parameter dictionary (`scaler_v1.pkl`) and mathematically scaled streaming batches on JVM.
+- Validated mathematical parity via `spark/test_pipeline.py`, yielding **100% agreement** between scikit-learn standard scaling and Spark scaling.
+

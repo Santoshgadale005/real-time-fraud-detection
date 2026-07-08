@@ -7,3 +7,5 @@ joblib
 kafka-python
 pydantic
 python-dotenv
+pyspark
+findspark
