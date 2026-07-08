@@ -1,0 +1,88 @@
+{
+    "model_version": "1.0.0",
+    "model_name": "Isolation Forest Fraud Detector",
+    "algorithm": "sklearn.ensemble.IsolationForest",
+    "stage": "production",
+    "training_date": "2026-07-06",
+    "training_date_utc": "2026-07-06T04:35:33.321847+00:00",
+    "validation_date": "2026-07-07",
+    "dataset": {
+        "name": "PaySim",
+        "description": "Synthetic financial transaction dataset simulating mobile money transfers",
+        "total_samples": 100000,
+        "training_samples": 80000,
+        "test_samples": 20000,
+        "fraud_rate_pct": 0.13,
+        "train_test_split": "80/20 stratified",
+        "random_state": 42
+    },
+    "hyperparameters": {
+        "contamination": 0.005,
+        "n_estimators": 300,
+        "max_samples": 50000,
+        "max_features": 1.0,
+        "random_state": 42,
+        "n_jobs": -1
+    },
+    "preprocessing": {
+        "scaler": "sklearn.preprocessing.StandardScaler",
+        "encoding": "pd.get_dummies (drop_first=True, dtype=int)",
+        "dropped_columns": ["nameOrig", "nameDest", "isFlaggedFraud"],
+        "baseline_category": "CASH_IN (dropped in one-hot encoding)"
+    },
+    "evaluation_metrics": {
+        "accuracy":         0.9939,
+        "precision":        0.029412,
+        "recall":           0.115385,
+        "f1_score":         0.046875,
+        "true_positives":   3,
+        "false_negatives":  23,
+        "false_positives":  99,
+        "true_negatives":   19875,
+        "recall_improvement_vs_baseline": "3x (baseline recall: 0.038462)"
+    },
+    "performance": {
+        "training_time_seconds":        1.4134,
+        "prediction_time_20k_seconds":  0.223,
+        "per_transaction_inference_ms": 0.011151,
+        "throughput_per_second":        89681.05
+    },
+    "stability": {
+        "validation_runs": 3,
+        "recall_std":      0.0,
+        "precision_std":   0.0,
+        "f1_std":          0.0,
+        "is_stable":       true,
+        "deterministic":   true,
+        "random_state_fixed": true
+    },
+    "artifacts": {
+        "model_v1":       "deployment/models/isolation_forest_v1.pkl",
+        "scaler_v1":      "deployment/models/scaler_v1.pkl",
+        "features":       "deployment/config/features.json",
+        "metadata":       "deployment/config/model_metadata.json",
+        "predict_module": "models/predict.py",
+        "predict_service": "deployment/predict_service.py"
+    },
+    "versioning": {
+        "current_version": "v1.0",
+        "versioning_scheme": "Major.Minor (e.g. v1.0, v1.1, v2.0)",
+        "next_version_trigger": "Recall improvement > 5pp or new feature engineering",
+        "artifact_naming": "isolation_forest_v{major}.{minor}.pkl"
+    },
+    "deployment_flags": {
+        "deployment_ready":  true,
+        "spark_compatible":  true,
+        "requires_scaler":   true,
+        "feature_order_fixed": true
+    },
+    "model_lineage": {
+        "day_8":  "Data preprocessing, StandardScaler fitting, train/test split",
+        "day_9":  "Isolation Forest baseline training (contamination=0.001, n_estimators=100)",
+        "day_10": "Baseline evaluation (recall=0.038, F1=0.048)",
+        "day_11": "Hyperparameter grid search (20 configs), best: contamination=0.005, n_estimators=300",
+        "day_12": "Model comparison, stability validation, production selection",
+        "day_13": "End-to-end pipeline validation (9/9 tests passed)",
+        "day_14": "Versioned serialization, deployment package finalization"
+    }
+}

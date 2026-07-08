@@ -1,0 +1,53 @@
+{
+    "features": [
+        "step",
+        "amount",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "type_CASH_OUT",
+        "type_DEBIT",
+        "type_PAYMENT",
+        "type_TRANSFER"
+    ],
+    "feature_count": 10,
+    "feature_descriptions": {
+        "step":           "Hour of simulation (1–744, representing one month)",
+        "amount":         "Transaction amount in local currency (always positive)",
+        "oldbalanceOrg":  "Sender account balance before the transaction",
+        "newbalanceOrig": "Sender account balance after the transaction",
+        "oldbalanceDest": "Receiver account balance before the transaction",
+        "newbalanceDest": "Receiver account balance after the transaction",
+        "type_CASH_OUT":  "Binary dummy: 1 if transaction type is CASH_OUT, else 0",
+        "type_DEBIT":     "Binary dummy: 1 if transaction type is DEBIT, else 0",
+        "type_PAYMENT":   "Binary dummy: 1 if transaction type is PAYMENT, else 0",
+        "type_TRANSFER":  "Binary dummy: 1 if transaction type is TRANSFER, else 0"
+    },
+    "encoding_notes": {
+        "original_column": "type",
+        "original_values": ["CASH_IN", "CASH_OUT", "DEBIT", "PAYMENT", "TRANSFER"],
+        "encoding_strategy": "pd.get_dummies with drop_first=True (CASH_IN is the dropped baseline)",
+        "dtype": "int (0 or 1)"
+    },
+    "preprocessing_notes": {
+        "scaler": "StandardScaler (zero mean, unit variance)",
+        "scaler_fitted_on": "X_train (80,000 samples from PaySim dataset)",
+        "scaler_artifact": "deployment/models/scaler_v1.pkl"
+    },
+    "spark_schema": {
+        "description": "Spark StructType for incoming transactions before feature engineering",
+        "fields": [
+            {"name": "step",           "type": "IntegerType",  "nullable": false},
+            {"name": "amount",         "type": "DoubleType",   "nullable": false},
+            {"name": "oldbalanceOrg",  "type": "DoubleType",   "nullable": false},
+            {"name": "newbalanceOrig", "type": "DoubleType",   "nullable": false},
+            {"name": "oldbalanceDest", "type": "DoubleType",   "nullable": false},
+            {"name": "newbalanceDest", "type": "DoubleType",   "nullable": false},
+            {"name": "type_CASH_OUT",  "type": "IntegerType",  "nullable": false},
+            {"name": "type_DEBIT",     "type": "IntegerType",  "nullable": false},
+            {"name": "type_PAYMENT",   "type": "IntegerType",  "nullable": false},
+            {"name": "type_TRANSFER",  "type": "IntegerType",  "nullable": false}
+        ]
+    }
+}
