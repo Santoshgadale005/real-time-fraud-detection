@@ -67,5 +67,15 @@ services:
       - kafka
     restart: unless-stopped
 
+  spark:
+    build:
+      context: ./spark
+    container_name: spark
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:29092
+    restart: unless-stopped
+
 volumes:
   mongodb_data:
