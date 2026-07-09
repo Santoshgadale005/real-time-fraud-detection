@@ -665,3 +665,12 @@ We built a high-performance feature preprocessing pipeline in PySpark (`spark/pr
 - Loaded the fitted StandardScaler parameter dictionary (`scaler_v1.pkl`) and mathematically scaled streaming batches on JVM.
 - Validated mathematical parity via `spark/test_pipeline.py`, yielding **100% agreement** between scikit-learn standard scaling and Spark scaling.
 
+## Day 16 Progress
+
+- Added Apache Spark Structured Streaming
+- Dockerized Spark service
+- Connected Spark with Kafka
+- Configured Java runtime for Spark
+- Created Spark streaming job
+- Verified Kafka topic connectivity
+- Began real-time streaming integration
