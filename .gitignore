@@ -33,3 +33,4 @@ models/*.pkl
 # Logs
 *.log
 logs/
+checkpoints/

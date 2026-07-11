@@ -1,20 +1,15 @@
-FROM python:3.8-slim
+FROM apache/spark:3.5.8
 
-# Install Java
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk && \
-    apt-get clean
-
-# Set Java environment
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV PATH="$JAVA_HOME/bin:$PATH"
+USER root
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY spark/requirements.txt /tmp/requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-COPY jobs ./jobs
+COPY . /app
 
-CMD ["python", "jobs/spark_streaming.py"]
+ENV PYTHONPATH=/app
+
+CMD ["sleep", "infinity"]

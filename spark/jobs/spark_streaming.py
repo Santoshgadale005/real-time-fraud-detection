@@ -16,7 +16,7 @@ spark.sparkContext.setLogLevel("ERROR")
 df = (
     spark.readStream
     .format("kafka")
-    .option("kafka.bootstrap.servers", "kafka:29092")   # <-- changed
+    .option("kafka.bootstrap.servers", "kafka:29092")
     .option("subscribe", "transactions")
     .option("startingOffsets", "earliest")
     .load()
@@ -24,11 +24,19 @@ df = (
 
 transactions = df.selectExpr("CAST(value AS STRING) AS value")
 
+# Checkpoint directory
+CHECKPOINT_LOCATION = "checkpoints/fraud_stream"
+
+# Checkpoint directory
+# Checkpoint directory
+CHECKPOINT_LOCATION = "/app/checkpoints/fraud_stream"
+
 query = (
     transactions.writeStream
     .format("console")
     .outputMode("append")
     .option("truncate", "false")
+    .option("checkpointLocation", CHECKPOINT_LOCATION)
     .start()
 )
 

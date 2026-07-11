@@ -17,7 +17,7 @@ def get_spark_session(app_name: str = "FraudDetection") -> SparkSession:
     
     # Use Spark SQL Kafka package (Scala 2.13 version is appropriate for Spark 3.5.0+ and 4.x)
     # We load both spark-sql-kafka and its dependencies
-    spark_jars = "org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.0"
+    spark_jars = "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0"
     
     builder = SparkSession.builder \
         .appName(app_name) \
