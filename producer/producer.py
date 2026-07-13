@@ -26,7 +26,7 @@ python3 producer/producer.py --create-topic --continuous
 """
 
 from __future__ import annotations
-from config.logger import logger
+
 
 import argparse
 import json
@@ -42,6 +42,11 @@ import pandas as pd
 from kafka import KafkaProducer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import KafkaError, TopicAlreadyExistsError
+# ---------------------------------------------------------------------------
+# Retry Configuration
+# ---------------------------------------------------------------------------
+_SEND_MAX_ATTEMPTS = 5
+_SEND_RETRY_BASE_DELAY = 1.0  # seconds
 
 # ---------------------------------------------------------------------------
 # Project root resolution (so config package is importable from any cwd)
@@ -49,7 +54,8 @@ from kafka.errors import KafkaError, TopicAlreadyExistsError
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
-
+    
+from config.logger import logger
 from config.producer_config import (  # noqa: E402
     PRODUCER_ACKS,
     PRODUCER_BATCH_SIZE,
@@ -327,8 +333,7 @@ def stream_transactions(args: argparse.Namespace) -> int:
                     total_sent += 1
                     sent_in_interval += 1
                     logger.info(
-                        "Sent transaction %s  [%s]  amount=%.2f  fraud=%s  "
-                        "→ %s[%d] offset %d",
+                        "Sent transaction %s [%s] amount=%.2f fraud=%s -> %s[%d] offset %d",
                         tx_id,
                         tx_type,
                         tx_amount,
@@ -336,7 +341,9 @@ def stream_transactions(args: argparse.Namespace) -> int:
                         metadata.topic,
                         metadata.partition,
                         metadata.offset,
-                    )
+)
+                    
+                    
                 except Exception as exc:  # noqa: BLE001
                     logger.error(
                         "Dropping transaction %s after all retries: %s", tx_id, exc
@@ -388,10 +395,10 @@ def main() -> None:
     args = parse_args()
     total = stream_transactions(args)
     logger.info(
-        "✅  Finished — %d transactions published to topic '%s'.",
-        total,
-        args.topic,
-    )
+    "Finished - %d transactions published to topic '%s'.",
+    total,
+    args.topic,
+)
 
 
 if __name__ == "__main__":

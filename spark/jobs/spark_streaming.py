@@ -1,3 +1,4 @@
+import joblib
 from pyspark.sql import SparkSession
 
 spark = (
@@ -12,6 +13,14 @@ spark = (
 )
 
 spark.sparkContext.setLogLevel("ERROR")
+print("=" * 60)
+print("Loading Fraud Detection Model...")
+
+model = joblib.load("/app/models/fraud_model.pkl")
+encoder = joblib.load("/app/models/label_encoder.pkl")
+
+print("Model Loaded Successfully")
+print("=" * 60)
 
 df = (
     spark.readStream

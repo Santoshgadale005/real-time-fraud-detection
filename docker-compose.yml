@@ -79,6 +79,11 @@ services:
       KAFKA_TRANSACTIONS_TOPIC: transactions
     volumes:
       - .:/app
+    working_dir: /app
+    command: >
+      spark-submit
+      --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0
+      /app/spark/jobs/spark_streaming.py
     restart: unless-stopped
 
 volumes:
