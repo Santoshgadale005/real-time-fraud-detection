@@ -28,6 +28,8 @@ from spark.utils import get_spark_session
 from spark.kafka_reader import read_kafka_stream
 from spark.preprocessing import preprocess_stream, engineer_features, one_hot_encode_type, scale_features
 from spark.monitor import FraudStreamingListener, assert_schema, print_query_status
+from spark.ml_predictor import MLPredictor
+from database.mongodb import predictions
 
 # ---------------------------------------------------------------------------
 # Logging setup
@@ -38,12 +40,26 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger("spark-streaming-pipeline")
+predictor = MLPredictor()
 
 # ---------------------------------------------------------------------------
 # Checkpoint directory
 # ---------------------------------------------------------------------------
 CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints" / "streaming"
+def process_batch(batch_df, batch_id):
 
+    pdf = batch_df.toPandas()
+
+    if pdf.empty:
+        return
+
+    predictor = MLPredictor()
+
+    result = predictor.predict_pandas(pdf)
+
+    predictions.insert_many(result.to_dict("records"))
+
+    print(f"Batch {batch_id}: {len(result)} records inserted")
 
 def main() -> None:
     logger.info("=" * 70)
@@ -85,22 +101,23 @@ def main() -> None:
     # ── 5. Feature engineering ───────────────────────────────────────────────
     engineered_df = engineer_features(clean_df)
     encoded_df    = one_hot_encode_type(engineered_df)
-    processed_df  = scale_features(encoded_df)
+    processed_df = encoded_df
 
     # ── 6. Schema validation (Day 17 — Step 13) ──────────────────────────────
     assert_schema(processed_df, stage="post-preprocessing")
 
     # ── 7. Select output columns (feature set + metadata) ────────────────────
     output_cols = [
-        "transaction_id", "event_time", "type", "amount",
-        "scaled_step", "scaled_amount",
-        "scaled_oldbalanceOrg", "scaled_newbalanceOrig",
-        "scaled_oldbalanceDest", "scaled_newbalanceDest",
-        "scaled_type_CASH_OUT", "scaled_type_DEBIT",
-        "scaled_type_PAYMENT", "scaled_type_TRANSFER",
-        "origin_balance_diff", "dest_balance_diff",
-        "amount_balance_ratio", "account_drained", "high_value_txn",
-    ]
+    "step",
+    "type",
+    "amount",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "isFlaggedFraud",
+]
+
     # Only select columns that actually exist (watermark may omit timestamp)
     available = set(processed_df.columns)
     final_df  = processed_df.select([c for c in output_cols if c in available])
@@ -111,14 +128,14 @@ def main() -> None:
 
     # ── 9. Write to console (append mode, 5-second trigger) ──────────────────
     query = (
-        final_df.writeStream
-        .format("console")
-        .outputMode("append")                                 # Step 7
-        .option("checkpointLocation", str(CHECKPOINT_DIR))   # Step 3
-        .option("truncate", "false")
-        .trigger(processingTime="5 seconds")                  # micro-batch
-        .start()
-    )
+    final_df.writeStream
+    .foreachBatch(process_batch)
+    .outputMode("append")
+    .option("checkpointLocation", str(CHECKPOINT_DIR))
+    .trigger(processingTime="5 seconds")
+    .start()
+)
+    
 
     logger.info("Streaming query started | outputMode=append | trigger=5s")
     print_query_status(query, label="initial")
