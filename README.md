@@ -327,6 +327,8 @@ All producer settings live in `config/producer_config.py` and can be overridden 
 - **Day 16**: Spark Structured Streaming data processing, feature engineering recreation, mathematical StandardScaler scaling, and validation parity tests ✅
 - **Day 17**: Advanced Spark Structured Streaming, 10s watermark configuration, checkpoints/streaming path setup, FraudStreamingListener metrics logging, and fault recovery ✅
 - **Day 18**: Streaming pipeline performance benchmarking (throughput/latency metrics tracker), backpressure optimization, checkpoint recovery validation, and performance reporting ✅
+- **Day 19**: Isolation Forest ML model integration into Spark Structured Streaming via foreachBatch, real-time anomaly predictions with severity scoring ✅
+- **Day 20**: MongoDB fraud alerts integration, alert document persistence with severity classification, end-to-end pipeline validation ✅
 
 ## Day 7 Additions: Throughput and Consumer Lag Monitoring
 
@@ -681,4 +683,20 @@ We validated and optimized the streaming feature pipeline under variable loads:
 - **Automated Performance Test**: Developed `spark/performance.py` implementing automated latency and throughput benchmarks.
 - **Throughput Metrics**: Measured peak processing throughput at **6,773 rows/second** at a batch size of 1000, with a sub-millisecond per-row latency of **0.148 ms/row**.
 - **Crash Recovery Validation**: Verified that Spark successfully reads intermediate checkpoint logs and resumes consuming Kafka messages from the last committed offset on restart.
+
+### Day 19: Integrating the Machine Learning Model with Spark Structured Streaming
+
+We integrated the trained Isolation Forest model directly into the Spark streaming pipeline:
+- **ML Predictor Module**: Created `spark/ml_predictor.py` with a singleton `MLPredictor` class that lazy-loads model/scaler/features once and applies real-time inference.
+- **foreachBatch Integration**: Replaced the console sink with a `foreachBatch(process_micro_batch)` callback that converts Spark DataFrames to Pandas, runs `predict()` and `decision_function()`, and converts raw predictions to binary fraud labels.
+- **Feature Name Preservation**: Passes named `pd.DataFrame` objects through the scaler to eliminate sklearn feature name warnings while maintaining mathematical parity.
+- **Validation Results**: End-to-end test with 5 transactions correctly identified 2 fraudulent transfers and 3 normal transactions at **4.83 ms/row** inference latency.
+
+### Day 20: Real-Time Fraud Detection & MongoDB Integration
+
+We completed the core fraud detection pipeline by connecting predictions to MongoDB:
+- **MongoDB Client**: Created `database/mongodb.py` with auto-reconnect, batch insert, and exponential backoff retry (3 attempts: 1s → 2s → 4s).
+- **Fraud Alert Routing**: Only transactions with `prediction == 1` are stored — not every transaction.
+- **Alert Severity**: Anomaly scores are classified as HIGH (< -0.8), MEDIUM (< -0.4), or LOW (≥ -0.4).
+- **Alert Document**: Each alert includes transaction_id, event_time, detection_time, type, amount, balances, prediction, anomaly_score, and severity.
 
