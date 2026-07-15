@@ -9,3 +9,4 @@ pydantic
 python-dotenv
 pyspark
 findspark
+prometheus-fastapi-instrumentator==7.1.0

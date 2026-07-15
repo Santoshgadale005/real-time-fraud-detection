@@ -86,5 +86,16 @@ services:
       /app/spark/jobs/spark_streaming.py
     restart: unless-stopped
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - fastapi
+    restart: unless-stopped
+
 volumes:
   mongodb_data:
