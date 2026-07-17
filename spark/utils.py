@@ -23,8 +23,9 @@ def get_spark_session(app_name: str = "FraudDetection") -> SparkSession:
         .appName(app_name) \
         .config("spark.jars.packages", spark_jars) \
         .config("spark.sql.streaming.forceDeleteTempCheckpointLocation", "true") \
-        .config("spark.driver.memory", "2g") \
-        .config("spark.executor.memory", "2g")
+        .config("spark.driver.memory", "4g") \
+        .config("spark.executor.memory", "4g") \
+        .config("spark.sql.shuffle.partitions", "10")
     
     spark = builder.getOrCreate()
     spark.sparkContext.setLogLevel("WARN")

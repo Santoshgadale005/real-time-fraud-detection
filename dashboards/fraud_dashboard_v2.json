@@ -1,0 +1,10 @@
+{
+  "title": "Advanced Monitoring Dashboard",
+  "panels": [
+    {"title": "Transaction Velocity"},
+    {"title": "Kafka Messages/sec"},
+    {"title": "Spark Active Queries"},
+    {"title": "MongoDB Documents Inserted"},
+    {"title": "Fraud Alerts/hour"}
+  ]
+}

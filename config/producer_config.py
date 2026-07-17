@@ -41,14 +41,14 @@ PRODUCER_CONTINUOUS = getenv("PRODUCER_CONTINUOUS", "true").lower() == "true"
 # batch_size  : max bytes accumulated before a batch is sent (16 KB default)
 # linger_ms   : max milliseconds to wait for more records to fill the batch
 # ---------------------------------------------------------------------------
-PRODUCER_BATCH_SIZE = int(getenv("PRODUCER_BATCH_SIZE", "16384"))   # 16 KB
-PRODUCER_LINGER_MS  = int(getenv("PRODUCER_LINGER_MS",  "5"))
+PRODUCER_BATCH_SIZE = int(getenv("PRODUCER_BATCH_SIZE", "65536"))   # 64 KB
+PRODUCER_LINGER_MS  = int(getenv("PRODUCER_LINGER_MS",  "20"))
 
 # ---------------------------------------------------------------------------
 # Compression
 # Reduces network bandwidth. Options: None | "gzip" | "snappy" | "lz4" | "zstd"
 # ---------------------------------------------------------------------------
-PRODUCER_COMPRESSION_TYPE = getenv("PRODUCER_COMPRESSION_TYPE", "gzip")
+PRODUCER_COMPRESSION_TYPE = getenv("PRODUCER_COMPRESSION_TYPE", "snappy")
 
 # ---------------------------------------------------------------------------
 # Reliability

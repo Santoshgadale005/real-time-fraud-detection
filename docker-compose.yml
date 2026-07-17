@@ -74,16 +74,22 @@ services:
     container_name: spark
     depends_on:
       - kafka
+      - mongodb
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       KAFKA_TRANSACTIONS_TOPIC: transactions
+      MONGO_URI: mongodb://admin:admin123@mongodb:27017
+      MONGO_DB: fraud_detection
+      PYTHONPATH: /app
     volumes:
       - .:/app
     working_dir: /app
     command: >
       spark-submit
       --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0
-      /app/spark/jobs/spark_streaming.py
+      --conf spark.driver.memory=4g
+      --conf spark.sql.shuffle.partitions=10
+      /app/spark/streaming.py
     restart: unless-stopped
 
   prometheus:
