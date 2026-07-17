@@ -23,5 +23,10 @@ app.include_router(predict_router)
 app.include_router(health_router)
 app.include_router(metadata_router)
 
-# Prometheus Metrics
-#Instrumentator().instrument(app).expose(app)
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from fastapi import Response
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+

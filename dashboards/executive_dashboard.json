@@ -1,0 +1,11 @@
+{
+  "title": "Executive Fraud Monitoring",
+  "panels": [
+    {"title": "Total Transactions (KPI)"},
+    {"title": "Fraud Transactions Detected (KPI)"},
+    {"title": "Fraud Detection Rate (KPI)"},
+    {"title": "Average Prediction Latency (KPI)"},
+    {"title": "Processing Throughput (KPI)"},
+    {"title": "Daily Fraud Trend"}
+  ]
+}

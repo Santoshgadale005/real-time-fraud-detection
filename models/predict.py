@@ -178,6 +178,17 @@ def predict_transaction(transaction: dict[str, Any]) -> dict[str, Any]:
         "is_fraud"      (bool)  — True if prediction == 1
         "label"         (str)   — "FRAUD" or "NORMAL"
     """
+    # Preprocess "type" if present
+    if "type" in transaction:
+        txn_type = transaction["type"]
+        transaction = transaction.copy()
+        transaction["type_CASH_OUT"] = 1.0 if txn_type == "CASH_OUT" else 0.0
+        transaction["type_DEBIT"] = 1.0 if txn_type == "DEBIT" else 0.0
+        transaction["type_PAYMENT"] = 1.0 if txn_type == "PAYMENT" else 0.0
+        transaction["type_TRANSFER"] = 1.0 if txn_type == "TRANSFER" else 0.0
+        # Remove original "type" so it doesn't cause extra feature warning
+        transaction.pop("type", None)
+
     # Validate
     validation = validate_features(transaction)
     if not validation["valid"]:

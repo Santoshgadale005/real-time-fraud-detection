@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: 5s
 
 scrape_configs:
   - job_name: "fastapi"
@@ -7,3 +7,8 @@ scrape_configs:
     static_configs:
       - targets:
           - fastapi:8000
+  - job_name: "simulator"
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - host.docker.internal:8001

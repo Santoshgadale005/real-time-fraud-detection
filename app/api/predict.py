@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from time import time
 
 from app.schemas.transaction import Transaction
-from app.services.predictor import predict_transaction
+from models.predict import predict_transaction
 
 from app.metrics import (
     prediction_requests,

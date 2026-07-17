@@ -110,8 +110,15 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_INSTALL_PLUGINS: "grafana-mongodb-datasource"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana_provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana_provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./dashboards:/etc/grafana/dashboards
     depends_on:
       - prometheus
     restart: unless-stopped

@@ -41,9 +41,9 @@ class FraudStreamingListener(StreamingQueryListener):
         progress = event.progress
         self._batch_count += 1
         input_rows   = progress.numInputRows
-        trigger_ms   = progress.triggerExecution.get("triggerExecution", {}).get(
-                            "durationMs", None) or progress.durationMs.get("triggerExecution", 0)
-        process_ms   = progress.durationMs.get("addBatch", 0)
+        duration_ms = getattr(progress, "durationMs", {})
+        trigger_ms = duration_ms.get("triggerExecution", 0) if isinstance(duration_ms, dict) else 0
+        process_ms = duration_ms.get("addBatch", 0) if isinstance(duration_ms, dict) else 0
         self._total_rows += input_rows
 
         elapsed = time.time() - self._start_time
@@ -58,6 +58,10 @@ class FraudStreamingListener(StreamingQueryListener):
 
         if progress.numInputRows == 0:
             logger.debug("   ⏳ No new data in this micro-batch (idle trigger).")
+
+    def onQueryIdle(self, event) -> None:
+        """Called when query is idle."""
+        pass
 
     def onQueryTerminated(self, event) -> None:  # type: ignore[override]
         if event.exception:

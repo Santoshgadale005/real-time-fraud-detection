@@ -1,0 +1,16 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    uid: prometheus_metrics
+    editable: true
+  - name: MongoDB
+    type: grafana-mongodb-datasource
+    access: proxy
+    url: mongodb://admin:admin123@mongodb:27017
+    database: fraud_detection
+    uid: mongodb_fraud_data
+    editable: true
