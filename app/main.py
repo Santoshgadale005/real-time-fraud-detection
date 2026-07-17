@@ -24,4 +24,4 @@ app.include_router(health_router)
 app.include_router(metadata_router)
 
 # Prometheus Metrics
-Instrumentator().instrument(app).expose(app)
+#Instrumentator().instrument(app).expose(app)
